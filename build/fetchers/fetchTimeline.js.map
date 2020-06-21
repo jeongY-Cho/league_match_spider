@@ -1,0 +1,1 @@
+{"version":3,"file":"fetchTimeline.js","sourceRoot":"","sources":["../../main/fetchers/fetchTimeline.ts"],"names":[],"mappings":";;;;;;AAAA,gDAA0B;AAC1B,gDAA+C;AAG/C,SAAgB,cAAc,CAAC,KAAa,EAAE,eAAuB;IACnE,IAAM,cAAc,GAAG,eAAe,GAAG,kCAAkC,CAAC;IAC5E,OAAO,eAAK,CAAC,GAAG,CAAiB,cAAc,GAAG,KAAK,CAAC,CAAC;AAC3D,CAAC;AAHD,wCAGC;AAEY,QAAA,aAAa,GAAG,2BAAY,CAAC,cAAc,CAAC,CAAC"}

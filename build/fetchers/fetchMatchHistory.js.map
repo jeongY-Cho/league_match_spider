@@ -1,0 +1,1 @@
+{"version":3,"file":"fetchMatchHistory.js","sourceRoot":"","sources":["../../main/fetchers/fetchMatchHistory.ts"],"names":[],"mappings":";;;;;;AAAA,gDAA0B;AAE1B,gDAA+C;AAE/C,SAAS,kBAAkB,CAAC,SAAiB,EAAE,eAAuB;IACpE,IAAM,sBAAsB,GAC1B,eAAe,GAAG,qCAAqC,CAAC;IAC1D,OAAO,eAAK,CAAC,GAAG,CAAuB,sBAAsB,GAAG,SAAS,CAAC,CAAC;AAC7E,CAAC;AAEY,QAAA,iBAAiB,GAAG,2BAAY,CAAC,kBAAkB,CAAC,CAAC"}

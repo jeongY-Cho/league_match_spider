@@ -1,0 +1,1 @@
+{"version":3,"file":"fetchMatch.js","sourceRoot":"","sources":["../../main/fetchers/fetchMatch.ts"],"names":[],"mappings":";;;;;;AAAA,gDAA0B;AAE1B,gDAA+C;AAE/C,SAAS,WAAW,CAAC,KAAa,EAAE,eAAuB;IACzD,IAAM,cAAc,GAAG,eAAe,GAAG,uBAAuB,CAAC;IACjE,OAAO,eAAK,CAAC,GAAG,CAAQ,cAAc,GAAG,KAAK,CAAC,CAAC;AAClD,CAAC;AACY,QAAA,UAAU,GAAG,2BAAY,CAAC,WAAW,CAAC,CAAC"}

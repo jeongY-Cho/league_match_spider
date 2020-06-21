@@ -13,12 +13,17 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^26.0.0",
+    "@types/mathjs": "^6.0.5",
+    "@types/mongodb": "^3.5.23",
     "jest": "^26.0.1",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "loglevel": "^1.6.8",
+    "mathjs": "^7.0.1",
+    "mongodb": "^3.5.9"
   }
 }

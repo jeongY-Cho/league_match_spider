@@ -1,13 +1,10 @@
-import axios from "axios";
+
 import { config } from "dotenv";
-import { MongoClient as Mongo } from "mongodb";
-import { Match, QueueID, Timeline, Frames } from "./types";
-import { median } from "mathjs";
+import { QueueID } from "./types";
 import * as log from "loglevel";
 import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";
 import { MatchBuffer } from "./MatchBuffer";
 import { fetchMatchAndTimeline } from "./fetchers/fetchMatchAndTimeline";
-import { existsInCollection } from "./utils";
 import { findEntry } from "./findEntry";
 config();
 log.setLevel(log.levels.DEBUG);
@@ -173,15 +170,4 @@ export function MatchSpider(options: MatchSpiderOptions) {
   };
 }
 
-async function main() {
-  let test = MatchSpider({
-    region: Regions.NA1,
-    fallbackMethod: "match",
-    matchId: "abc",
-    mongoURI: "abc",
-    collectionName: "c",
-    dbName: "3",
-  });
-  for await (let each of test.iter()) {
-  }
-}
+

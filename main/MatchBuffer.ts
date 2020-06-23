@@ -2,7 +2,7 @@ import { MatchSummary } from "./types";
 
 export default class MatchBuffer extends Array<MatchSummary> {
   constructor(public max_size: number) {
-    super(0);
+    super();
   }
 
   push = (...items: MatchSummary[]) => {

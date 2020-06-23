@@ -23,7 +23,7 @@ interface CommonOptions {
   bufferSize?: number;
   queues?: QueueID[];
   entryGameId?: string;
-  duplicateChecker?: (gameId: number) => boolean | Promise<boolean>;
+  duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
   max_iter?: number;
 }
 
@@ -86,7 +86,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
     // log successfully found
     log.info("Using API key:", process.env.RIOT_API_KEY);
   } else {
-    //
+    // 
     log.warn("RIOT_API_KEY not found in .env; terminating");
     throw "RIOT_API_KEY not found in .env; add RIOT_API_KEY to .env and try again";
   }
@@ -99,9 +99,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
     max_attempts: 3,
     max_age: 24 * 60 * 60 * 1000,
     entryGameId: undefined,
-    duplicateChecker: async function () {
-      return false;
-    },
+    duplicateChecker: async function(){return false},
   };
 
   let _options = Object.assign(defaults, options);

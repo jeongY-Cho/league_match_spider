@@ -57,7 +57,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchWrapper = void 0;
 var log = __importStar(require("loglevel"));
-var findEntry_1 = require("./findEntry");
+var utils_1 = require("./utils");
 function fetchWrapper(fn, max_attempts) {
     if (max_attempts === void 0) { max_attempts = 3; }
     var counter = 0;
@@ -98,7 +98,7 @@ function fetchWrapper(fn, max_attempts) {
                     case 3:
                         // Rate limit Reached
                         log.info("[429] Rate Limit Reached");
-                        return [4 /*yield*/, findEntry_1.asyncWait(parseInt(err_1.response.headers["retry-after"]) + 1)];
+                        return [4 /*yield*/, utils_1.asyncWait(parseInt(err_1.response.headers["retry-after"]) + 1)];
                     case 4:
                         _c.sent();
                         return [3 /*break*/, 16];

@@ -1,2 +1,2 @@
 import { Match } from "../types/Match";
-export declare const fetchMatch: (gameId: number, region: string) => Promise<import("axios").AxiosResponse<Match>>;
+export declare const fetchMatch: (gameId: number, region: "https://br1.api.riotgames.com" | "https://eun1.api.riotgames.com" | "https://euw1.api.riotgames.com" | "https://jp1.api.riotgames.com" | "https://kr.api.riotgames.com" | "https://la1.api.riotgames.com" | "https://la2.api.riotgames.com" | "https://na1.api.riotgames.com" | "https://oc1.api.riotgames.com" | "https://tr1.api.riotgames.com" | "https://ru.api.riotgames.com") => Promise<import("axios").AxiosResponse<Match>>;

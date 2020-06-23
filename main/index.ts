@@ -146,6 +146,139 @@ export async function matchSpider(RIOT_API_REGION: string) {
   }
 }
 
-interface MatchSpiderOptions {}
+type MatchSpiderOptions = CommonOptions &
+  (AccountFallback | FeaturedGameFallback);
 
-export function MatchSpider(options: MatchSpiderOptions) {}
+interface CommonOptions {
+  region: Regions;
+  mongoURI: string;
+  dbName: string;
+  collectionName: string;
+  bufferSize?: number;
+  queues?: QueueID[];
+  entryGameId?: string;
+  duplicateChecker?: (gameId: number) => boolean | boolean;
+}
+
+interface AccountFallback {
+  fallbackMethod: "match";
+  matchId: string;
+}
+interface FeaturedGameFallback {
+  fallbackMethod?: "featured";
+}
+
+enum Regions {
+  "BR1",
+  "EUN1",
+  "EUW1",
+  "JP1",
+  "KR",
+  "LA1",
+  "LA2",
+  "NA1",
+  "OC1",
+  "TR1",
+  "RU",
+}
+
+type RegionLookup = {
+  [Regions.BR1]: "https://br1.api.riotgames.com";
+  [Regions.EUN1]: "https://eun1.api.riotgames.com";
+  [Regions.EUW1]: "https://euw1.api.riotgames.com";
+  [Regions.JP1]: "https://jp1.api.riotgames.com";
+  [Regions.KR]: "https://kr.api.riotgames.com";
+  [Regions.LA1]: "https://la1.api.riotgames.com";
+  [Regions.LA2]: "https://la2.api.riotgames.com";
+  [Regions.NA1]: "https://na1.api.riotgames.com";
+  [Regions.OC1]: "https://oc1.api.riotgames.com";
+  [Regions.TR1]: "https://tr1.api.riotgames.com";
+  [Regions.RU]: "https://ru.api.riotgames.com";
+};
+const RegionLookup: RegionLookup = {
+  [Regions.BR1]: "https://br1.api.riotgames.com",
+  [Regions.EUN1]: "https://eun1.api.riotgames.com",
+  [Regions.EUW1]: "https://euw1.api.riotgames.com",
+  [Regions.JP1]: "https://jp1.api.riotgames.com",
+  [Regions.KR]: "https://kr.api.riotgames.com",
+  [Regions.LA1]: "https://la1.api.riotgames.com",
+  [Regions.LA2]: "https://la2.api.riotgames.com",
+  [Regions.NA1]: "https://na1.api.riotgames.com",
+  [Regions.OC1]: "https://oc1.api.riotgames.com",
+  [Regions.TR1]: "https://tr1.api.riotgames.com",
+  [Regions.RU]: "https://ru.api.riotgames.com",
+};
+
+export type ValueOf<T> = T[keyof T];
+export type ValueOfRegions = ValueOf<RegionLookup>;
+
+export function MatchSpider(options: MatchSpiderOptions) {
+  // load from dot env for access in functions
+  config();
+  if (process.env.RIOT_API_KEY) {
+    log.info("Using API key:", process.env.RIOT_API_KEY);
+  } else {
+    log.warn("RIOT_API_KEY not found in .env");
+    throw "RIOT_API_KEY not found in .env";
+  }
+
+  const FREATURED_GAMES_URL = "";
+  const defaults = {
+    fallbackMethod: "featured_game",
+    bufferSize: 1000,
+    queues: [QueueID.Flex_SR, QueueID.Solo_SR],
+    max_attempts: 3,
+    max_age: 24 * 60 * 60 * 1000,
+    entryGameId: undefined,
+    duplicateChecker: () => false,
+  };
+
+  let _options = Object.assign(defaults, options);
+  return {
+    iter: async function* () {
+      // initialize buffer
+      const matchBuffer = new MatchBuffer(_options.bufferSize);
+      log.debug(
+        `matchBuffer initialized with max size: ${_options.bufferSize}`
+      );
+
+      if (_options.entryGameId) {
+        log.info("Starting crawl with entryGame:", _options.entryGameId);
+      } else {
+        log.info("Starting crawl with featured game entry");
+      }
+
+      while (true) {
+        // get the (entry) game
+        let targetMatch =
+          matchBuffer.shift() ||
+          (await findEntry(
+            _options.entryGameId,
+            RegionLookup[_options.region],
+            FREATURED_GAMES_URL,
+            _options.max_age
+          ));
+        // get the game
+
+        yield 3;
+        // {
+        //   Match,
+        //   Frames,
+        // };
+      }
+    },
+  };
+}
+
+async function main() {
+  let test = MatchSpider({
+    region: Regions.NA1,
+    fallbackMethod: "match",
+    matchId: "abc",
+    mongoURI: "abc",
+    collectionName: "c",
+    dbName: "3",
+  });
+  for await (let each of test.iter()) {
+  }
+}

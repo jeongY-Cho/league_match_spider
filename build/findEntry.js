@@ -36,68 +36,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.asyncWait = exports.findEntry = void 0;
-var fetchMatchAndTimeline_1 = require("./fetchers/fetchMatchAndTimeline");
-var findNewMatchFromMatch_1 = require("./findNewMatchFromMatch");
-function findEntry(Matches, RIOT_API_REGION, featured_games_url, max_age) {
+exports.findEntry = void 0;
+var fetchMatch_1 = require("./fetchers/fetchMatch");
+var fetchFeaturedMatches_1 = require("./fetchers/fetchFeaturedMatches");
+function findEntry(entryGameId, RIOT_API_REGION, featured_games_url, max_age) {
     if (max_age === void 0) { max_age = 48 * 60 * 60 * 1000; }
     return __awaiter(this, void 0, void 0, function () {
-        var i, aMatch, ret;
+        var match, featuredGames, matchesSummary;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    i = 0;
-                    _a.label = 1;
+                    if (!entryGameId) return [3 /*break*/, 2];
+                    return [4 /*yield*/, fetchMatch_1.fetchMatch(entryGameId, RIOT_API_REGION)];
                 case 1:
-                    if (!(i < 100)) return [3 /*break*/, 6];
-                    return [4 /*yield*/, fetchMatchAndTimeline_1.getRandomMatchFromDB(Matches)];
-                case 2:
-                    aMatch = _a.sent();
-                    if (!aMatch) return [3 /*break*/, 4];
-                    return [4 /*yield*/, findNewMatchFromMatch_1.findNewMatchFromMatch(aMatch, max_age, Matches, RIOT_API_REGION)];
+                    // if entry game id: then get the match from that
+                    match = _a.sent();
+                    return [3 /*break*/, 4];
+                case 2: return [4 /*yield*/, fetchFeaturedMatches_1.fetchFeaturedMatches(undefined, RIOT_API_REGION)];
                 case 3:
-                    ret = _a.sent();
-                    if (ret) {
-                        return [2 /*return*/, ret];
-                    }
-                    return [3 /*break*/, 5];
-                case 4: 
-                // if no entries are found then break out of loop
-                return [3 /*break*/, 6];
-                case 5:
-                    i++;
-                    return [3 /*break*/, 1];
-                case 6: 
-                // if no matches are in db or no new matches are found use FALLBACK_ENTRY as entry account
-                // TODO: use random game from riot featured matches
-                // let matchHistory = await fetchMatchHistory(fallback, RIOT_API_REGION);
-                // // iterate through fallback account matches till one is found
-                // for (let match of matchHistory.data.matches) {
-                //   let aMatch = await fetchMatch(match.gameId, RIOT_API_REGION);
-                //   let entry = await findNewMatchFromMatch(
-                //     aMatch.data,
-                //     10000000000,
-                //     Matches,
-                //     RIOT_API_REGION
-                //   );
-                //   if (entry) {
-                //     return entry;
-                //   }
-                // }
-                // if nothing is found throw fatal error
-                throw "No entry found";
+                    featuredGames = _a.sent();
+                    matchesSummary = featuredGames.data.gameList.filter(function (match) {
+                        return match.gameQueueConfigID;
+                    });
+                    _a.label = 4;
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
 exports.findEntry = findEntry;
-function asyncWait(secs) {
-    console.log("Waiting " + secs);
-    return new Promise(function (resolve) {
-        setTimeout(function () {
-            resolve();
-        }, secs * 1000);
-    });
-}
-exports.asyncWait = asyncWait;
 //# sourceMappingURL=findEntry.js.map

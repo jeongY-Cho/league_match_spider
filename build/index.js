@@ -54,9 +54,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __await = (this && this.__await) || function (v) { return this instanceof __await ? (this.v = v, this) : new __await(v); }
+var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
+    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
+    function fulfill(value) { resume("next", value); }
+    function reject(value) { resume("throw", value); }
+    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
+};
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MatchSpider = exports.matchSpider = void 0;
 var axios_1 = __importDefault(require("axios"));
@@ -71,7 +91,7 @@ var utils_1 = require("./utils");
 var findEntry_1 = require("./findEntry");
 dotenv_1.config();
 log.setLevel(log.levels.DEBUG);
-var _a = process.env, RIOT_API_NA = _a.RIOT_API_NA, RIOT_API_KEY = _a.RIOT_API_KEY, FALLBACK_ENTRY = _a.FALLBACK_ENTRY;
+var _b = process.env, RIOT_API_NA = _b.RIOT_API_NA, RIOT_API_KEY = _b.RIOT_API_KEY, FALLBACK_ENTRY = _b.FALLBACK_ENTRY;
 if (RIOT_API_NA === undefined ||
     RIOT_API_KEY === undefined ||
     FALLBACK_ENTRY === undefined) {
@@ -203,6 +223,142 @@ function matchSpider(RIOT_API_REGION) {
     });
 }
 exports.matchSpider = matchSpider;
-function MatchSpider(options) { }
+var Regions;
+(function (Regions) {
+    Regions[Regions["BR1"] = 0] = "BR1";
+    Regions[Regions["EUN1"] = 1] = "EUN1";
+    Regions[Regions["EUW1"] = 2] = "EUW1";
+    Regions[Regions["JP1"] = 3] = "JP1";
+    Regions[Regions["KR"] = 4] = "KR";
+    Regions[Regions["LA1"] = 5] = "LA1";
+    Regions[Regions["LA2"] = 6] = "LA2";
+    Regions[Regions["NA1"] = 7] = "NA1";
+    Regions[Regions["OC1"] = 8] = "OC1";
+    Regions[Regions["TR1"] = 9] = "TR1";
+    Regions[Regions["RU"] = 10] = "RU";
+})(Regions || (Regions = {}));
+var RegionLookup = (_a = {},
+    _a[Regions.BR1] = "https://br1.api.riotgames.com",
+    _a[Regions.EUN1] = "https://eun1.api.riotgames.com",
+    _a[Regions.EUW1] = "https://euw1.api.riotgames.com",
+    _a[Regions.JP1] = "https://jp1.api.riotgames.com",
+    _a[Regions.KR] = "https://kr.api.riotgames.com",
+    _a[Regions.LA1] = "https://la1.api.riotgames.com",
+    _a[Regions.LA2] = "https://la2.api.riotgames.com",
+    _a[Regions.NA1] = "https://na1.api.riotgames.com",
+    _a[Regions.OC1] = "https://oc1.api.riotgames.com",
+    _a[Regions.TR1] = "https://tr1.api.riotgames.com",
+    _a[Regions.RU] = "https://ru.api.riotgames.com",
+    _a);
+function MatchSpider(options) {
+    // load from dot env for access in functions
+    dotenv_1.config();
+    if (process.env.RIOT_API_KEY) {
+        log.info("Using API key:", process.env.RIOT_API_KEY);
+    }
+    else {
+        log.warn("RIOT_API_KEY not found in .env");
+        throw "RIOT_API_KEY not found in .env";
+    }
+    var FREATURED_GAMES_URL = "";
+    var defaults = {
+        fallbackMethod: "featured_game",
+        bufferSize: 1000,
+        queues: [Match_1.QueueID.Flex_SR, Match_1.QueueID.Solo_SR],
+        max_attempts: 3,
+        max_age: 24 * 60 * 60 * 1000,
+        entryGameId: undefined,
+        duplicateChecker: function () { return false; },
+    };
+    var _options = Object.assign(defaults, options);
+    return {
+        iter: function () {
+            return __asyncGenerator(this, arguments, function () {
+                var matchBuffer, targetMatch, _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            matchBuffer = new MatchBuffer_1.MatchBuffer(_options.bufferSize);
+                            log.debug("matchBuffer initialized with max size: " + _options.bufferSize);
+                            if (_options.entryGameId) {
+                                log.info("Starting crawl with entryGame:", _options.entryGameId);
+                            }
+                            else {
+                                log.info("Starting crawl with featured game entry");
+                            }
+                            _b.label = 1;
+                        case 1:
+                            if (!true) return [3 /*break*/, 6];
+                            _a = matchBuffer.shift();
+                            if (_a) return [3 /*break*/, 3];
+                            return [4 /*yield*/, __await(findEntry_1.findEntry(_options.entryGameId, RegionLookup[_options.region], FREATURED_GAMES_URL, _options.max_age))];
+                        case 2:
+                            _a = (_b.sent());
+                            _b.label = 3;
+                        case 3:
+                            targetMatch = _a;
+                            return [4 /*yield*/, __await(3)];
+                        case 4: 
+                        // get the game
+                        return [4 /*yield*/, _b.sent()];
+                        case 5:
+                            // get the game
+                            _b.sent();
+                            return [3 /*break*/, 1];
+                        case 6: return [2 /*return*/];
+                    }
+                });
+            });
+        },
+    };
+}
 exports.MatchSpider = MatchSpider;
+function main() {
+    var e_1, _a;
+    return __awaiter(this, void 0, void 0, function () {
+        var test, _b, _c, each, e_1_1;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    test = MatchSpider({
+                        region: Regions.NA1,
+                        fallbackMethod: "match",
+                        matchId: "abc",
+                        mongoURI: "abc",
+                        collectionName: "c",
+                        dbName: "3",
+                    });
+                    _d.label = 1;
+                case 1:
+                    _d.trys.push([1, 6, 7, 12]);
+                    _b = __asyncValues(test.iter());
+                    _d.label = 2;
+                case 2: return [4 /*yield*/, _b.next()];
+                case 3:
+                    if (!(_c = _d.sent(), !_c.done)) return [3 /*break*/, 5];
+                    each = _c.value;
+                    _d.label = 4;
+                case 4: return [3 /*break*/, 2];
+                case 5: return [3 /*break*/, 12];
+                case 6:
+                    e_1_1 = _d.sent();
+                    e_1 = { error: e_1_1 };
+                    return [3 /*break*/, 12];
+                case 7:
+                    _d.trys.push([7, , 10, 11]);
+                    if (!(_c && !_c.done && (_a = _b.return))) return [3 /*break*/, 9];
+                    return [4 /*yield*/, _a.call(_b)];
+                case 8:
+                    _d.sent();
+                    _d.label = 9;
+                case 9: return [3 /*break*/, 11];
+                case 10:
+                    if (e_1) throw e_1.error;
+                    return [7 /*endfinally*/];
+                case 11: return [7 /*endfinally*/];
+                case 12: return [2 /*return*/];
+            }
+        });
+    });
+}
 //# sourceMappingURL=index.js.map

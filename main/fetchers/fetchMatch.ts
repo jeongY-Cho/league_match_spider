@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Match } from "../types";
 import { fetchWrapper } from "./fetchWrapper";
 import path from "path";
 import url from "url";

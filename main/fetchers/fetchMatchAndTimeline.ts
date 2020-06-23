@@ -1,7 +1,6 @@
 import { AxiosResponse } from "axios";
 import { Collection } from "mongodb";
-import { FramesResponse } from "../types/FullTimeline";
-import { Match } from "../types/Match";
+import { Match, FramesResponse } from "../types";
 import { fetchMatch } from "./fetchMatch";
 import { fetchTimeline } from "./fetchTimeline";
 import { fetchWrapper } from "./fetchWrapper";

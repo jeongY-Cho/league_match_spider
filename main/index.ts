@@ -1,8 +1,7 @@
 import axios from "axios";
 import { config } from "dotenv";
 import { MongoClient as Mongo } from "mongodb";
-import { Frames } from "./types/FullTimeline";
-import { Match, QueueID, Timeline } from "./types/Match";
+import { Match, QueueID, Timeline, Frames } from "./types";
 import { median } from "mathjs";
 import * as log from "loglevel";
 import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";

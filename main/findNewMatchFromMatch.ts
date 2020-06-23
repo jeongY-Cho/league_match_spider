@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { Collection } from "mongodb";
 import { Match, QueueID } from "./types/Match";
-import { MatchHistoryResponse } from "./types/MatchHistory";
+import { MatchHistoryResponse } from "./types";
 import * as log from "loglevel";
 import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";
 import { asyncWait } from "./findEntry";

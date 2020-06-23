@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { fetchWrapper } from "./fetchWrapper";
 import { ValueOfRegions } from "..";
 import url from "url";
-import { FeaturedMatchResponse } from "../types/FeaturedMatchesResponse";
+import { FeaturedMatchResponse } from "../types";
 
 function _fetchFeaturedMatches(
   u: undefined,

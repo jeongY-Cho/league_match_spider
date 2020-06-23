@@ -1,4 +1,5 @@
 import axios from "axios";
+import { MatchHistoryResponse } from "../types";
 import { fetchWrapper } from "./fetchWrapper";
 
 function _fetchMatchHistory(accountId: string, RIOT_API_REGION: string) {

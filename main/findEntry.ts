@@ -1,12 +1,12 @@
 import { asyncWait } from "./utils";
 import { Collection } from "mongodb";
-import { Match } from "./types/Match";
+
 import { fetchMatch } from "./fetchers/fetchMatch";
 import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";
 import { getRandomMatchFromDB } from "./fetchers/fetchMatchAndTimeline";
 import { findNewMatchFromMatch } from "./findNewMatchFromMatch";
 import { ValueOf, ValueOfRegions } from ".";
-import { MatchSummary } from "./types/MatchHistory";
+import { MatchSummary, Match, QueueID } from "./types";
 import { AxiosResponse } from "axios";
 import { fetchFeaturedMatches } from "./fetchers/fetchFeaturedMatches";
 

@@ -127,8 +127,8 @@ export function MatchSpider(options: MatchSpiderOptions) {
           (await findEntry(
             _options.entryGameId,
             RegionLookup[_options.region],
-            FREATURED_GAMES_URL,
-            _options.max_age
+            _options.max_age,
+            _options.queues
           ));
         log.debug("got game:", targetMatch.gameId);
 
@@ -171,10 +171,6 @@ export function MatchSpider(options: MatchSpiderOptions) {
           match: matchRes.data,
           timeline: timelineRes.data,
         };
-        // {
-        //   Match,
-        //   Frames,
-        // };
       }
     },
   };

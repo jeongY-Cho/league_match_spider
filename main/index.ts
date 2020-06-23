@@ -91,7 +91,6 @@ export function MatchSpider(options: MatchSpiderOptions) {
     throw "RIOT_API_KEY not found in .env; add RIOT_API_KEY to .env and try again";
   }
 
-  const FREATURED_GAMES_URL = "";
   const defaults = {
     fallbackMethod: "featured_game",
     bufferSize: 1000,

@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import { QueueID } from "./types";
 import * as log from "loglevel";
 import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";
-import { MatchBuffer } from "./MatchBuffer";
+import MatchBuffer from "./MatchBuffer";
 import { fetchMatchAndTimeline } from "./fetchers/fetchMatchAndTimeline";
 import { findEntry } from "./findEntry";
 config();

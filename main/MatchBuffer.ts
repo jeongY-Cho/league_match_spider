@@ -1,6 +1,6 @@
-import { MatchSummary } from "./types/MatchHistory";
+import { MatchSummary } from "./types";
 
-export class MatchBuffer extends Array<MatchSummary> {
+export default class MatchBuffer extends Array<MatchSummary> {
   constructor(public max_size: number) {
     super(0);
   }

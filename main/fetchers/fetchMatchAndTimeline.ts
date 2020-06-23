@@ -4,7 +4,7 @@ import { FramesResponse } from "../types/FullTimeline";
 import { Match } from "../types/Match";
 import { fetchMatch } from "./fetchMatch";
 import { fetchTimeline } from "./fetchTimeline";
-import { fetchWrapper } from "../fetchWrapper";
+import { fetchWrapper } from "./fetchWrapper";
 import { ValueOfRegions } from "..";
 
 async function _fetchMatchAndTimeline(

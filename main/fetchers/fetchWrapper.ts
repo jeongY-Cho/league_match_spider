@@ -1,5 +1,5 @@
 import * as log from "loglevel";
-import { asyncWait } from "./utils";
+import { asyncWait } from "../utils";
 
 export function fetchWrapper<A, B, R>(
   fn: (gameIdOrRegion: A, region: B) => Promise<R>,
@@ -7,13 +7,13 @@ export function fetchWrapper<A, B, R>(
 ) {
   let counter = 0;
 
-  return async function (gameId: A, region: B): Promise<R> {
+  return async function (id: A, region: B): Promise<R> {
     try {
       log.debug(`${fn.name} called`);
-      log.trace(`${fn.name} called with ${gameId}`);
-      let res = await fn(gameId, region);
+      log.trace(`${fn.name} called with ${id}`);
+      let res = await fn(id, region);
       // @ts-ignore
-      log.debug(`${fn.name} returned from call with: ${gameId}`);
+      log.debug(`${fn.name} returned from call with: ${id}`);
       counter = 0;
       return res;
     } catch (err) {
@@ -26,53 +26,53 @@ export function fetchWrapper<A, B, R>(
           break;
         case 400:
           // Bad Request
-          log.warn(`[400] Bad Request; on ${fn.name} and ${gameId}`);
+          log.warn(`[400] Bad Request; on ${fn.name} and ${id}`);
           break;
         case 403:
           // Forbidden
-          log.warn(`[403] Forbidden; on ${fn.name} and ${gameId}`);
+          log.warn(`[403] Forbidden; on ${fn.name} and ${id}`);
           break;
         case 404:
           // Data not found
-          log.debug(`[404] Data not found; on ${fn.name} and ${gameId}`);
+          log.debug(`[404] Data not found; on ${fn.name} and ${id}`);
           throw err;
         case 405:
           // Method not allowed
-          log.warn(`[405] Method not allowed; on ${fn.name} and ${gameId}`);
+          log.warn(`[405] Method not allowed; on ${fn.name} and ${id}`);
           throw err;
         case 415:
           // Unsupported Media Type
-          log.warn(`[415] Unsupported Media Type; on ${fn.name} and ${gameId}`);
+          log.warn(`[415] Unsupported Media Type; on ${fn.name} and ${id}`);
           throw err;
         case 401:
           // Unauthorized
-          log.error(`[405] Unauthorized; on ${fn.name} and ${gameId}`);
+          log.error(`[405] Unauthorized; on ${fn.name} and ${id}`);
           throw err;
         case 500:
           // Internal Server Error
-          log.warn(`[500] Internal Server Error; on ${fn.name} and ${gameId}`);
+          log.warn(`[500] Internal Server Error; on ${fn.name} and ${id}`);
 
         case 502:
           // Bad Gateway
-          log.warn(`[502] Bad Gateway; on ${fn.name} and ${gameId}`);
+          log.warn(`[502] Bad Gateway; on ${fn.name} and ${id}`);
           break;
         case 504:
           // Service Unavailable
-          log.warn(`[504] Service Unavailable; on ${fn.name} and ${gameId}`);
+          log.warn(`[504] Service Unavailable; on ${fn.name} and ${id}`);
           break;
         case 503:
           // Gateway Timeout
-          log.warn(`[503] Gateway Timeout; on ${fn.name} and ${gameId}`);
+          log.warn(`[503] Gateway Timeout; on ${fn.name} and ${id}`);
           break;
         default:
           switch (err.code) {
             // switch cases for axios err
             case "ECONNREFUSED":
-              log.error(`ECONNREFUSED; on ${fn.name} and ${gameId}`);
+              log.error(`ECONNREFUSED; on ${fn.name} and ${id}`);
               log.trace();
               break;
             case "ETIMEDOUT":
-              log.error(`ETIMEDOUT; on ${fn.name} and ${gameId}`);
+              log.error(`ETIMEDOUT; on ${fn.name} and ${id}`);
               log.trace();
               break;
             default:
@@ -81,13 +81,13 @@ export function fetchWrapper<A, B, R>(
       }
       if (counter < max_attempts) {
         log.debug(
-          `Retrying on ${fn.name} and ${gameId}; attempts left: `,
+          `Retrying on ${fn.name} and ${id}; attempts left: `,
           max_attempts - counter
         );
         counter++;
-        return fetchWrapper(fn)(gameId, region);
+        return fetchWrapper(fn)(id, region);
       } else {
-        log.error(`Max Attempts on ${fn.name} and ${gameId}`);
+        log.error(`Max Attempts on ${fn.name} and ${id}`);
         throw err;
       }
     }

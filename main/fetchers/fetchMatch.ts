@@ -1,6 +1,5 @@
 import axios from "axios";
-import { Match } from "../types/Match";
-import { fetchWrapper } from "../fetchWrapper";
+import { fetchWrapper } from "./fetchWrapper";
 import path from "path";
 import url from "url";
 import { ValueOfRegions } from "..";

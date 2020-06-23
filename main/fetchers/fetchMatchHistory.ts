@@ -1,6 +1,5 @@
 import axios from "axios";
-import { MatchHistoryResponse } from "../types/MatchHistory";
-import { fetchWrapper } from "../fetchWrapper";
+import { fetchWrapper } from "./fetchWrapper";
 
 function _fetchMatchHistory(accountId: string, RIOT_API_REGION: string) {
   const MATCH_HISTORY_ENDPOINT =

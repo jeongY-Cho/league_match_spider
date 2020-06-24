@@ -1,5 +1,4 @@
 import { AxiosResponse } from "axios";
-import { Collection } from "mongodb";
 import { Match, FramesResponse } from "../types";
 import { fetchMatch } from "./fetchMatch";
 import { fetchTimeline } from "./fetchTimeline";
@@ -16,13 +15,4 @@ async function _fetchMatchAndTimeline(
   ]);
 }
 export const fetchMatchAndTimeline = fetchWrapper(_fetchMatchAndTimeline);
-export async function getRandomMatchFromDB(
-  Matches: Collection<Match>,
-  max_age = 24 * 60 * 60 * 1000
-) {
-  let ret = Matches.aggregate([
-    { $match: { gameCreation: { $gt: Date.now() - max_age } } },
-    { $sample: { size: 1 } },
-  ]);
-  return (await ret.next()) as Match;
-}
+

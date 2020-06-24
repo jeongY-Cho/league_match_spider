@@ -57,11 +57,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchWrapper = void 0;
 var log = __importStar(require("loglevel"));
-var utils_1 = require("./utils");
+var utils_1 = require("../utils");
 function fetchWrapper(fn, max_attempts) {
     if (max_attempts === void 0) { max_attempts = 3; }
-    var counter = 0;
-    return function (gameId, region) {
+    return function (id, region) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
             var res, err_1, _b;
@@ -70,13 +69,12 @@ function fetchWrapper(fn, max_attempts) {
                     case 0:
                         _c.trys.push([0, 2, , 17]);
                         log.debug(fn.name + " called");
-                        log.trace(fn.name + " called with " + gameId);
-                        return [4 /*yield*/, fn(gameId, region)];
+                        log.trace(fn.name + " called with " + id);
+                        return [4 /*yield*/, fn(id, region)];
                     case 1:
                         res = _c.sent();
                         // @ts-ignore
-                        log.debug(fn.name + " returned from call with: " + gameId);
-                        counter = 0;
+                        log.debug(fn.name + " returned from call with: " + id);
                         return [2 /*return*/, res];
                     case 2:
                         err_1 = _c.sent();
@@ -104,53 +102,53 @@ function fetchWrapper(fn, max_attempts) {
                         return [3 /*break*/, 16];
                     case 5:
                         // Bad Request
-                        log.warn("[400] Bad Request; on " + fn.name + " and " + gameId);
+                        log.warn("[400] Bad Request; on " + fn.name + " and " + id);
                         return [3 /*break*/, 16];
                     case 6:
                         // Forbidden
-                        log.warn("[403] Forbidden; on " + fn.name + " and " + gameId);
-                        return [3 /*break*/, 16];
+                        log.warn("[403] Forbidden; on " + fn.name + " and " + id);
+                        throw err_1;
                     case 7:
                         // Data not found
-                        log.debug("[404] Data not found; on " + fn.name + " and " + gameId);
+                        log.debug("[404] Data not found; on " + fn.name + " and " + id);
                         throw err_1;
                     case 8:
                         // Method not allowed
-                        log.warn("[405] Method not allowed; on " + fn.name + " and " + gameId);
+                        log.warn("[405] Method not allowed; on " + fn.name + " and " + id);
                         throw err_1;
                     case 9:
                         // Unsupported Media Type
-                        log.warn("[415] Unsupported Media Type; on " + fn.name + " and " + gameId);
+                        log.warn("[415] Unsupported Media Type; on " + fn.name + " and " + id);
                         throw err_1;
                     case 10:
                         // Unauthorized
-                        log.error("[405] Unauthorized; on " + fn.name + " and " + gameId);
+                        log.error("[405] Unauthorized; on " + fn.name + " and " + id);
                         throw err_1;
                     case 11:
                         // Internal Server Error
-                        log.warn("[500] Internal Server Error; on " + fn.name + " and " + gameId);
-                        _c.label = 12;
+                        log.warn("[500] Internal Server Error; on " + fn.name + " and " + id);
+                        return [3 /*break*/, 16];
                     case 12:
                         // Bad Gateway
-                        log.warn("[502] Bad Gateway; on " + fn.name + " and " + gameId);
+                        log.warn("[502] Bad Gateway; on " + fn.name + " and " + id);
                         return [3 /*break*/, 16];
                     case 13:
                         // Service Unavailable
-                        log.warn("[504] Service Unavailable; on " + fn.name + " and " + gameId);
+                        log.warn("[504] Service Unavailable; on " + fn.name + " and " + id);
                         return [3 /*break*/, 16];
                     case 14:
                         // Gateway Timeout
-                        log.warn("[503] Gateway Timeout; on " + fn.name + " and " + gameId);
+                        log.warn("[503] Gateway Timeout; on " + fn.name + " and " + id);
                         return [3 /*break*/, 16];
                     case 15:
                         switch (err_1.code) {
                             // switch cases for axios err
                             case "ECONNREFUSED":
-                                log.error("ECONNREFUSED; on " + fn.name + " and " + gameId);
+                                log.error("ECONNREFUSED; on " + fn.name + " and " + id);
                                 log.trace();
                                 break;
                             case "ETIMEDOUT":
-                                log.error("ETIMEDOUT; on " + fn.name + " and " + gameId);
+                                log.error("ETIMEDOUT; on " + fn.name + " and " + id);
                                 log.trace();
                                 break;
                             default:
@@ -158,13 +156,12 @@ function fetchWrapper(fn, max_attempts) {
                         }
                         _c.label = 16;
                     case 16:
-                        if (counter < max_attempts) {
-                            log.debug("Retrying on " + fn.name + " and " + gameId + "; attempts left: ", max_attempts - counter);
-                            counter++;
-                            return [2 /*return*/, fetchWrapper(fn)(gameId, region)];
+                        if (max_attempts - 1) {
+                            log.debug("Retrying on " + fn.name + " and " + id + "; attempts left: ", max_attempts - 1);
+                            return [2 /*return*/, fetchWrapper(fn, max_attempts - 1)(id, region)];
                         }
                         else {
-                            log.error("Max Attempts on " + fn.name + " and " + gameId);
+                            log.error("Max Attempts on " + fn.name + " and " + id);
                             throw err_1;
                         }
                         return [3 /*break*/, 17];

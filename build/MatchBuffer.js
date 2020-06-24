@@ -13,11 +13,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MatchBuffer = void 0;
 var MatchBuffer = /** @class */ (function (_super) {
     __extends(MatchBuffer, _super);
     function MatchBuffer(max_size) {
-        var _this = _super.call(this, 0) || this;
+        var _this = _super.call(this) || this;
         _this.max_size = max_size;
         _this.push = function () {
             var items = [];
@@ -36,5 +35,5 @@ var MatchBuffer = /** @class */ (function (_super) {
     }
     return MatchBuffer;
 }(Array));
-exports.MatchBuffer = MatchBuffer;
+exports.default = MatchBuffer;
 //# sourceMappingURL=MatchBuffer.js.map

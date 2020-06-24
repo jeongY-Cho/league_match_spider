@@ -1,2 +1,2 @@
-import { MatchHistoryResponse } from "../types/MatchHistory";
-export declare const fetchMatchHistory: (gameId: string, region: string) => Promise<import("axios").AxiosResponse<MatchHistoryResponse>>;
+import { MatchHistoryResponse } from "../types";
+export declare const fetchMatchHistory: (id: string, region: string) => Promise<import("axios").AxiosResponse<MatchHistoryResponse>>;

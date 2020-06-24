@@ -36,10 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRandomMatchFromDB = exports.fetchMatchAndTimeline = void 0;
+exports.fetchMatchAndTimeline = void 0;
 var fetchMatch_1 = require("./fetchMatch");
 var fetchTimeline_1 = require("./fetchTimeline");
-var fetchWrapper_1 = require("../fetchWrapper");
+var fetchWrapper_1 = require("./fetchWrapper");
 function _fetchMatchAndTimeline(gameId, RIOT_API_REGION) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -51,22 +51,4 @@ function _fetchMatchAndTimeline(gameId, RIOT_API_REGION) {
     });
 }
 exports.fetchMatchAndTimeline = fetchWrapper_1.fetchWrapper(_fetchMatchAndTimeline);
-function getRandomMatchFromDB(Matches, max_age) {
-    if (max_age === void 0) { max_age = 24 * 60 * 60 * 1000; }
-    return __awaiter(this, void 0, void 0, function () {
-        var ret;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    ret = Matches.aggregate([
-                        { $match: { gameCreation: { $gt: Date.now() - max_age } } },
-                        { $sample: { size: 1 } },
-                    ]);
-                    return [4 /*yield*/, ret.next()];
-                case 1: return [2 /*return*/, (_a.sent())];
-            }
-        });
-    });
-}
-exports.getRandomMatchFromDB = getRandomMatchFromDB;
 //# sourceMappingURL=fetchMatchAndTimeline.js.map

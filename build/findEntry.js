@@ -38,28 +38,43 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findEntry = void 0;
 var fetchMatch_1 = require("./fetchers/fetchMatch");
+var fetchMatchHistory_1 = require("./fetchers/fetchMatchHistory");
 var fetchFeaturedMatches_1 = require("./fetchers/fetchFeaturedMatches");
-function findEntry(entryGameId, RIOT_API_REGION, featured_games_url, max_age) {
+var fetchAccountInfo_1 = require("./fetchers/fetchAccountInfo");
+function findEntry(entryGameId, RIOT_API_REGION, queues, max_age) {
     if (max_age === void 0) { max_age = 48 * 60 * 60 * 1000; }
     return __awaiter(this, void 0, void 0, function () {
-        var match, featuredGames, matchesSummary;
+        var randomParticipantId, match, featuredGames, matchesSummary, randomGame, randomParticipant, matchHistory;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!entryGameId) return [3 /*break*/, 2];
                     return [4 /*yield*/, fetchMatch_1.fetchMatch(entryGameId, RIOT_API_REGION)];
                 case 1:
-                    // if entry game id: then get the match from that
                     match = _a.sent();
-                    return [3 /*break*/, 4];
+                    randomParticipantId =
+                        match.data.participantIdentities[Math.floor(Math.random() * match.data.participantIdentities.length)].player.accountId;
+                    return [3 /*break*/, 5];
                 case 2: return [4 /*yield*/, fetchFeaturedMatches_1.fetchFeaturedMatches(undefined, RIOT_API_REGION)];
                 case 3:
                     featuredGames = _a.sent();
-                    matchesSummary = featuredGames.data.gameList.filter(function (match) {
-                        return match.gameQueueConfigID;
+                    matchesSummary = featuredGames.data.gameList.filter(function (game) {
+                        console.log(game);
+                        return queues.includes(game.gameQueueConfigID);
                     });
-                    _a.label = 4;
-                case 4: return [2 /*return*/];
+                    randomGame = matchesSummary[Math.floor(Math.random() * matchesSummary.length)];
+                    randomParticipant = randomGame.participants[Math.floor(Math.random() * randomGame.participants.length)];
+                    return [4 /*yield*/, fetchAccountInfo_1.fetchAccountInfo(randomParticipant.summonerName, RIOT_API_REGION)];
+                case 4:
+                    randomParticipantId = (_a.sent()).data.accountId;
+                    _a.label = 5;
+                case 5: return [4 /*yield*/, fetchMatchHistory_1.fetchMatchHistory(randomParticipantId, RIOT_API_REGION)];
+                case 6:
+                    matchHistory = (_a.sent()).data.matches;
+                    console.log(matchHistory);
+                    return [2 /*return*/, matchHistory.filter(function (match) {
+                            return (match.timestamp >= Date.now() - max_age - 1000 && queues.includes(match.queue));
+                        })[0]];
             }
         });
     });

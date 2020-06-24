@@ -2,10 +2,10 @@ import { fetchWrapper } from "./fetchWrapper";
 import {endpoints} from "../constants"
 import { ValueOfRegions } from "..";
 import url from "url"
-import Axios from "axios";
+import Axios, { AxiosResponse } from "axios";
 import { AccountInfo } from "../types"
 
-function _fetchAccountInfo(id: string, REGION: ValueOfRegions): Promise<AccountInfo> {
+function _fetchAccountInfo(id: string, REGION: ValueOfRegions): Promise<AxiosResponse< AccountInfo>> {
     let endpoint = url.resolve(REGION, endpoints.ACCOUNT_INFO + id)
     return Axios.get(endpoint, {
         headers: {

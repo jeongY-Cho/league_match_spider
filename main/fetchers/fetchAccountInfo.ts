@@ -6,7 +6,7 @@ import Axios, { AxiosResponse } from "axios";
 import { AccountInfo } from "../types"
 
 function _fetchAccountInfo(id: string, REGION: ValueOfRegions): Promise<AxiosResponse< AccountInfo>> {
-    let endpoint = url.resolve(REGION, endpoints.ACCOUNT_INFO + id)
+    let endpoint = encodeURI(url.resolve(REGION, endpoints.ACCOUNT_INFO + id))
     return Axios.get(endpoint, {
         headers: {
             "X-Riot-Token": process.env.RIOT_API_KEY

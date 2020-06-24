@@ -3,6 +3,7 @@ import { fetchWrapper } from "./fetchWrapper";
 import { ValueOfRegions } from "..";
 import url from "url";
 import { FeaturedMatchResponse } from "../types";
+import { endpoints } from "../constants";
 
 function _fetchFeaturedMatches(
   u: undefined,
@@ -10,7 +11,7 @@ function _fetchFeaturedMatches(
 ): Promise<AxiosResponse<FeaturedMatchResponse>> {
   let featuredGamesEndpoint = url.resolve(
     region,
-    "lol/spectator/v4/featured-games"
+    endpoints.FEATURED_MATCHES
   );
   return axios.get(featuredGamesEndpoint, {
     headers: {

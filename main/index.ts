@@ -1,6 +1,6 @@
+import { QueueID } from "./types";
 
 import { config } from "dotenv";
-import { QueueID } from "./types";
 import * as log from "loglevel";
 import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";
 import MatchBuffer from "./MatchBuffer";
@@ -16,10 +16,10 @@ interface CommonOptions {
   region: Regions | URegions;
   bufferSize?: number;
   queues?: QueueID[];
-  entryGameId?: string;
+  entryGameId?: number;
   duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
   max_iter?: number;
-  logging: log.LogLevelDesc
+  logging?: log.LogLevelDesc
 }
 
 interface AccountFallback {
@@ -40,10 +40,15 @@ export function MatchSpider(options: MatchSpiderOptions) {
     // log successfully found
     log.info("Using API key:", process.env.RIOT_API_KEY);
   } else {
-    // 
     log.warn("RIOT_API_KEY not found in .env; terminating");
     throw "RIOT_API_KEY not found in .env; add RIOT_API_KEY to .env and try again";
   }
+
+  // check that region supplied in options
+  if (!options?.region) {
+    log.warn("region not given")
+    throw "Region not specified in options"
+  } 
 
   const defaults = {
     fallbackMethod: "featured_game",
@@ -51,17 +56,13 @@ export function MatchSpider(options: MatchSpiderOptions) {
     queues: [QueueID.Flex_SR, QueueID.Solo_SR],
     max_attempts: 3,
     max_age: 24 * 60 * 60 * 1000,
-    entryGameId: undefined,
     duplicateChecker: async function(){return false},
     logging: log.levels.WARN
   };
 
   let _options = Object.assign(defaults, options);
 
-  log.setLevel(log.levels.WARN)
-  if (_options.logging) {
-    log.setLevel(_options.logging)
-  }
+  log.setLevel(_options.logging)
 
   return {
     iter: async function* (max_iter?:number) {
@@ -71,12 +72,16 @@ export function MatchSpider(options: MatchSpiderOptions) {
         `matchBuffer initialized with max size: ${_options.bufferSize}`
       );
 
+      // debug msg
       if (_options.entryGameId) {
         log.info("Starting crawl with entryGame:", _options.entryGameId);
       } else {
         log.info("Starting crawl with featured game entry");
       }
-      let loops = 0
+
+
+      let loops = 0  // loop counter
+      let skips = 0
       while (loops < (max_iter || Infinity)) {
         log.info(`match buffer current length: ${matchBuffer.length}`);
         // get the (entry) game
@@ -85,17 +90,31 @@ export function MatchSpider(options: MatchSpiderOptions) {
           (await findEntry(
             _options.entryGameId,
             RegionLookup[_options.region],
+            _options.queues,
             _options.max_age,
-            _options.queues
           ));
         log.debug("got game:", targetMatch.gameId);
+
+        // check if entry found:
+        if (!targetMatch) {
+          // if no entry found then loop back and try again
+          continue
+        }
 
         // check if match is a duplicate or not
         if (await _options.duplicateChecker(targetMatch.gameId)) {
           // if is duplicate skip
           log.debug(`${targetMatch.gameId} is a duplicate; skipping...`);
+          skips ++
+          if (skips === 1000) {
+            log.warn(`skipped ${skips} in a row `)
+          }
           continue;
+        } else {
+          skips = 0
         }
+
+        
 
         // get the game info
         let [matchRes, timelineRes] = await fetchMatchAndTimeline(
@@ -106,7 +125,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
 
         // get a random player to pull match history from
         let randomAccount =
-          matchRes.data.participantIdentities[Math.floor(Math.random() * 10)]
+          matchRes.data.participantIdentities[Math.floor(Math.random() * matchRes.data.participantIdentities.length)]
             .player.accountId;
 
         if (matchBuffer.length < _options.bufferSize - 20) {
@@ -118,7 +137,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
             RegionLookup[_options.region]
           );
           matchHistory.data.matches.forEach((match) => {
-            if (match.queue in _options.queues) {
+            if (_options.queues.includes(match.queue)) {
               matchBuffer.push(match);
             }
           });

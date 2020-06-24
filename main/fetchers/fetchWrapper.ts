@@ -5,7 +5,6 @@ export function fetchWrapper<A, B, R>(
   fn: (gameIdOrRegion: A, region: B) => Promise<R>,
   max_attempts = 3
 ) {
-  let counter = 0;
 
   return async function (id: A, region: B): Promise<R> {
     try {
@@ -14,7 +13,6 @@ export function fetchWrapper<A, B, R>(
       let res = await fn(id, region);
       // @ts-ignore
       log.debug(`${fn.name} returned from call with: ${id}`);
-      counter = 0;
       return res;
     } catch (err) {
       switch (err.response?.status) {
@@ -31,7 +29,7 @@ export function fetchWrapper<A, B, R>(
         case 403:
           // Forbidden
           log.warn(`[403] Forbidden; on ${fn.name} and ${id}`);
-          break;
+          throw err
         case 404:
           // Data not found
           log.debug(`[404] Data not found; on ${fn.name} and ${id}`);
@@ -51,7 +49,7 @@ export function fetchWrapper<A, B, R>(
         case 500:
           // Internal Server Error
           log.warn(`[500] Internal Server Error; on ${fn.name} and ${id}`);
-
+          break
         case 502:
           // Bad Gateway
           log.warn(`[502] Bad Gateway; on ${fn.name} and ${id}`);
@@ -79,13 +77,14 @@ export function fetchWrapper<A, B, R>(
               throw err;
           }
       }
-      if (counter < max_attempts) {
+
+      if (max_attempts - 1 ) {
+        
         log.debug(
           `Retrying on ${fn.name} and ${id}; attempts left: `,
-          max_attempts - counter
+          max_attempts - 1
         );
-        counter++;
-        return fetchWrapper(fn)(id, region);
+        return fetchWrapper(fn, max_attempts - 1)(id, region);
       } else {
         log.error(`Max Attempts on ${fn.name} and ${id}`);
         throw err;

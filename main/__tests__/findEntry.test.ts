@@ -47,25 +47,30 @@ test("test with id", async () => {
     "https://test1.api.riotgames.com" as ValueOfRegions,
     [QueueID.Flex_SR]
   );
-  expect(axios.get).toBeCalledTimes(2);
+  expect(axios.get).toBeCalledTimes(3);
   expect(res).toMatchObject({
     timestamp: now - 1001,
     queue: QueueID.Flex_SR,
   });
 });
 
-test("test non default max_age", async () => {
+test("test non default max_age", async done => {
   let spyNow = jest.spyOn(global.Date, "now").mockReturnValue(now)
+  
   jest.clearAllMocks()
-  let res = await findEntry(
-    123,
-    "https://test1.api.riotgames.com" as ValueOfRegions,
-    [ QueueID.Flex_SR  ],
-    0
-  );
-  expect(axios.get).toBeCalledTimes(2);
-  expect(res).toBeUndefined()
+  findEntry(
+        123,
+        "https://test1.api.riotgames.com" as ValueOfRegions,
+        [ QueueID.Flex_SR  ],
+        0
+      ).catch(err=>{
+        expect(err).toMatch(/No match found/i)
+        expect(axios.get).toBeCalledTimes(3);
+        done()
+      })
 });
+
+
 test("test queue filter", async () => {
   let spyNow = jest.spyOn(global.Date, "now").mockReturnValue(now)
   jest.clearAllMocks()
@@ -75,7 +80,7 @@ test("test queue filter", async () => {
     [ QueueID.Flex_SR  ],
     
   );
-  expect(axios.get).toBeCalledTimes(2);
+  expect(axios.get).toBeCalledTimes(3);
   expect(res1).toMatchObject({
     timestamp: now - 1001,
     queue: QueueID.Flex_SR
@@ -88,7 +93,7 @@ test("test queue filter", async () => {
     [ QueueID.ARAM_ButchersBridge  ],
     
   );
-  expect(axios.get).toBeCalledTimes(2);
+  expect(axios.get).toBeCalledTimes(3);
   expect(res2).toMatchObject({
     timestamp: now,
     queue: QueueID.ARAM_ButchersBridge,

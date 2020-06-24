@@ -57,7 +57,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
 
   let _options = Object.assign(defaults, options);
   return {
-    iter: async function* () {
+    iter: async function* (max_iter?:number) {
       // initialize buffer
       const matchBuffer = new MatchBuffer(_options.bufferSize);
       log.debug(
@@ -69,8 +69,8 @@ export function MatchSpider(options: MatchSpiderOptions) {
       } else {
         log.info("Starting crawl with featured game entry");
       }
-
-      while (true) {
+      let loops = 0
+      while (loops < (max_iter || Infinity)) {
         log.info(`match buffer current length: ${matchBuffer.length}`);
         // get the (entry) game
         let targetMatch =
@@ -122,7 +122,9 @@ export function MatchSpider(options: MatchSpiderOptions) {
           match: matchRes.data,
           timeline: timelineRes.data,
         };
+        loops++
       }
+      return
     },
   };
 }

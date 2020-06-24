@@ -8,7 +8,6 @@ import { fetchMatchAndTimeline } from "./fetchers/fetchMatchAndTimeline";
 import { findEntry } from "./findEntry";
 import { Regions, RegionLookup, URegions } from "./Regions";
 config();
-log.setLevel(log.levels.DEBUG);
 
 type MatchSpiderOptions = CommonOptions &
   (AccountFallback | FeaturedGameFallback);
@@ -20,6 +19,7 @@ interface CommonOptions {
   entryGameId?: string;
   duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
   max_iter?: number;
+  logging: log.LogLevelDesc
 }
 
 interface AccountFallback {
@@ -53,9 +53,16 @@ export function MatchSpider(options: MatchSpiderOptions) {
     max_age: 24 * 60 * 60 * 1000,
     entryGameId: undefined,
     duplicateChecker: async function(){return false},
+    logging: log.levels.WARN
   };
 
   let _options = Object.assign(defaults, options);
+
+  log.setLevel(log.levels.WARN)
+  if (_options.logging) {
+    log.setLevel(_options.logging)
+  }
+
   return {
     iter: async function* (max_iter?:number) {
       // initialize buffer

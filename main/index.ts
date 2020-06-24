@@ -6,7 +6,7 @@ import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";
 import MatchBuffer from "./MatchBuffer";
 import { fetchMatchAndTimeline } from "./fetchers/fetchMatchAndTimeline";
 import { findEntry } from "./findEntry";
-import { Regions, RegionLookup } from "./Regions";
+import { Regions, RegionLookup, URegions } from "./Regions";
 config();
 log.setLevel(log.levels.DEBUG);
 
@@ -14,10 +14,7 @@ type MatchSpiderOptions = CommonOptions &
   (AccountFallback | FeaturedGameFallback);
 
 interface CommonOptions {
-  region: Regions;
-  mongoURI: string;
-  dbName: string;
-  collectionName: string;
+  region: Regions | URegions;
   bufferSize?: number;
   queues?: QueueID[];
   entryGameId?: string;

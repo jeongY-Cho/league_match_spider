@@ -7,7 +7,11 @@ import url from "url"
 function _fetchMatchHistory(accountId: string, RIOT_API_REGION: string) {
   const MATCH_HISTORY_ENDPOINT =
     url.resolve(RIOT_API_REGION,endpoints.MATCH_HISTORY);
-  return axios.get<MatchHistoryResponse>(MATCH_HISTORY_ENDPOINT + accountId);
+  return axios.get<MatchHistoryResponse>(MATCH_HISTORY_ENDPOINT + accountId, {
+    headers: {
+      "X-Riot-Token": process.env.RIOT_API_KEY
+    }
+  });
 }
 
 export const fetchMatchHistory = fetchWrapper(_fetchMatchHistory);

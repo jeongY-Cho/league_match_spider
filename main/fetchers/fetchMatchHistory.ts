@@ -1,10 +1,12 @@
 import axios from "axios";
 import { MatchHistoryResponse } from "../types";
 import { fetchWrapper } from "./fetchWrapper";
+import { endpoints } from "../constants";
+import url from "url"
 
 function _fetchMatchHistory(accountId: string, RIOT_API_REGION: string) {
   const MATCH_HISTORY_ENDPOINT =
-    RIOT_API_REGION + "lol/match/v4/matchlists/by-account/";
+    url.resolve(RIOT_API_REGION,endpoints.MATCH_HISTORY);
   return axios.get<MatchHistoryResponse>(MATCH_HISTORY_ENDPOINT + accountId);
 }
 

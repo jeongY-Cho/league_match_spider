@@ -4,9 +4,10 @@ import { fetchWrapper } from "./fetchWrapper";
 import path from "path";
 import url from "url";
 import { ValueOfRegions } from "..";
+import { endpoints } from "../constants";
 
 function _fetchMatch(match: number, RIOT_API_REGION: ValueOfRegions) {
-  const MATCH_ENDPOINT = url.resolve(RIOT_API_REGION, "lol/match/v4/matches/");
+  const MATCH_ENDPOINT = url.resolve(RIOT_API_REGION, endpoints.MATCHES);
   return axios.get<Match>(MATCH_ENDPOINT + match);
 }
 export const fetchMatch = fetchWrapper(_fetchMatch);

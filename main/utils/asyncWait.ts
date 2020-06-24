@@ -1,5 +1,7 @@
+import * as log from "loglevel"
+
 export function asyncWait(secs: number) {
-  console.log(`Waiting ${secs}`);
+  log.info(`Waiting ${secs}`);
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();

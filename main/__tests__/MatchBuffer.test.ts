@@ -59,3 +59,21 @@ test("test push sort", ()=>{
     expect(matchBuffer[testLength-1].timestamp).toBe(2)
 })
 
+test("test duplicate removal", ()=>{
+    let testLength = 6;
+    let matchBuffer = new MatchBuffer(testLength);
+    let testPushes = [
+      { timestamp: 1 },
+      { timestamp: 5 },
+      { timestamp: 3 },
+      { timestamp: 2 },
+      { timestamp: 4 },
+      { timestamp: 1 },
+    ];
+
+    for (let testPush of testPushes) {
+        matchBuffer.push((testPush as unknown) as MatchSummary);
+    }
+
+    expect(matchBuffer.length).toBe(5)
+})

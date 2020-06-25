@@ -123,24 +123,40 @@ export function MatchSpider(options: MatchSpiderOptions) {
         );
         log.debug("fetched match and timeline data for", targetMatch.gameId);
 
-        // get a random player to pull match history from
-        let randomAccount =
-          matchRes.data.participantIdentities[Math.floor(Math.random() * matchRes.data.participantIdentities.length)]
-            .player.accountId;
-
+        
         if (matchBuffer.length < _options.bufferSize - 20) {
+          // if the buffer has a small number of entries: fill it
+          // implemented to limit the number of api calls
+
+          // get a random player to pull match history from
+          let randomAccount =
+            matchRes.data.participantIdentities[Math.floor(Math.random() * matchRes.data.participantIdentities.length)]
+              .player.accountId;
           log.info(
             `refilling matchBuffer; current length: ${matchBuffer.length}`
           );
-          let matchHistory = await fetchMatchHistory(
-            randomAccount,
-            RegionLookup[_options.region]
-          );
-          matchHistory.data.matches.forEach((match) => {
-            if (_options.queues.includes(match.queue)) {
-              matchBuffer.push(match);
+          try {
+            let matchHistory = await fetchMatchHistory(
+              randomAccount,
+              RegionLookup[_options.region]
+            );
+            matchHistory.data.matches.forEach((match) => {
+              if (_options.queues.includes(match.queue)) {
+                matchBuffer.push(match);
+              }
+            });
+
+          } catch (err) {
+
+            if (!err.response?.code) {
+              // if the api call returns a response error: it doesn't matter skip it. 
+              throw err
             }
-          });
+            if (err.status !== "ECONNREFUSED" && err.status !== "ETIMEDOUT") {
+              // if the api call times out or is refused: it doesnt matter skip it
+              throw err
+            }
+          }
         }
 
         // yield result

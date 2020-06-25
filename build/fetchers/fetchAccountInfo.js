@@ -9,7 +9,7 @@ var constants_1 = require("../constants");
 var url_1 = __importDefault(require("url"));
 var axios_1 = __importDefault(require("axios"));
 function _fetchAccountInfo(id, REGION) {
-    var endpoint = url_1.default.resolve(REGION, constants_1.endpoints.ACCOUNT_INFO + id);
+    var endpoint = encodeURI(url_1.default.resolve(REGION, constants_1.endpoints.ACCOUNT_INFO + id));
     return axios_1.default.get(endpoint, {
         headers: {
             "X-Riot-Token": process.env.RIOT_API_KEY

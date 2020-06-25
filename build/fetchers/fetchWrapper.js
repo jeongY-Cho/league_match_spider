@@ -75,6 +75,11 @@ function fetchWrapper(fn, max_attempts) {
                         res = _c.sent();
                         // @ts-ignore
                         log.debug(fn.name + " returned from call with: " + id);
+                        // @ts-ignore
+                        if (res.headers) {
+                            // @ts-ignore
+                            log.debug("Rate limit count: " + res.headers["X-App-Rate-Limit-Count"]);
+                        }
                         return [2 /*return*/, res];
                     case 2:
                         err_1 = _c.sent();

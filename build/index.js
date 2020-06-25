@@ -113,10 +113,11 @@ function MatchSpider(options) {
     log.setLevel(_options.logging);
     return {
         iter: function (max_iter) {
+            var _a;
             return __asyncGenerator(this, arguments, function () {
-                var matchBuffer, loops, skips, targetMatch, _a, _b, matchRes, timelineRes, randomAccount, matchHistory;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var matchBuffer, loops, skips, targetMatch, _b, _c, matchRes, timelineRes, randomAccount, matchHistory, err_1;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
                             matchBuffer = new MatchBuffer_1.default(_options.bufferSize);
                             log.debug("matchBuffer initialized with max size: " + _options.bufferSize);
@@ -130,19 +131,18 @@ function MatchSpider(options) {
                             loops = 0 // loop counter
                             ;
                             skips = 0;
-                            _c.label = 1;
+                            _d.label = 1;
                         case 1:
-                            if (!(loops < (max_iter || Infinity))) return [3 /*break*/, 10];
+                            if (!(loops < (max_iter || Infinity))) return [3 /*break*/, 12];
                             log.info("match buffer current length: " + matchBuffer.length);
-                            _a = matchBuffer.shift();
-                            if (_a) return [3 /*break*/, 3];
+                            _b = matchBuffer.shift();
+                            if (_b) return [3 /*break*/, 3];
                             return [4 /*yield*/, __await(findEntry_1.findEntry(_options.entryGameId, Regions_1.RegionLookup[_options.region], _options.queues, _options.max_age))];
                         case 2:
-                            _a = (_c.sent());
-                            _c.label = 3;
+                            _b = (_d.sent());
+                            _d.label = 3;
                         case 3:
-                            targetMatch = _a;
-                            console.log(targetMatch);
+                            targetMatch = _b;
                             log.debug("got game:", targetMatch.gameId);
                             // check if entry found:
                             if (!targetMatch) {
@@ -152,7 +152,7 @@ function MatchSpider(options) {
                             return [4 /*yield*/, __await(_options.duplicateChecker(targetMatch.gameId))];
                         case 4:
                             // check if match is a duplicate or not
-                            if (_c.sent()) {
+                            if (_d.sent()) {
                                 // if is duplicate skip
                                 log.debug(targetMatch.gameId + " is a duplicate; skipping...");
                                 skips++;
@@ -166,35 +166,49 @@ function MatchSpider(options) {
                             }
                             return [4 /*yield*/, __await(fetchMatchAndTimeline_1.fetchMatchAndTimeline(targetMatch.gameId, Regions_1.RegionLookup[_options.region]))];
                         case 5:
-                            _b = _c.sent(), matchRes = _b[0], timelineRes = _b[1];
+                            _c = _d.sent(), matchRes = _c[0], timelineRes = _c[1];
                             log.debug("fetched match and timeline data for", targetMatch.gameId);
+                            if (!(matchBuffer.length < _options.bufferSize - 20)) return [3 /*break*/, 9];
                             randomAccount = matchRes.data.participantIdentities[Math.floor(Math.random() * matchRes.data.participantIdentities.length)]
                                 .player.accountId;
-                            if (!(matchBuffer.length < _options.bufferSize - 20)) return [3 /*break*/, 7];
                             log.info("refilling matchBuffer; current length: " + matchBuffer.length);
-                            return [4 /*yield*/, __await(fetchMatchHistory_1.fetchMatchHistory(randomAccount, Regions_1.RegionLookup[_options.region]))];
+                            _d.label = 6;
                         case 6:
-                            matchHistory = _c.sent();
+                            _d.trys.push([6, 8, , 9]);
+                            return [4 /*yield*/, __await(fetchMatchHistory_1.fetchMatchHistory(randomAccount, Regions_1.RegionLookup[_options.region]))];
+                        case 7:
+                            matchHistory = _d.sent();
                             matchHistory.data.matches.forEach(function (match) {
                                 if (_options.queues.includes(match.queue)) {
                                     matchBuffer.push(match);
                                 }
                             });
-                            _c.label = 7;
-                        case 7: return [4 /*yield*/, __await({
+                            return [3 /*break*/, 9];
+                        case 8:
+                            err_1 = _d.sent();
+                            if (!((_a = err_1.response) === null || _a === void 0 ? void 0 : _a.code)) {
+                                // if the api call returns a response error: it doesn't matter skip it. 
+                                throw err_1;
+                            }
+                            if (err_1.status !== "ECONNREFUSED" && err_1.status !== "ETIMEDOUT") {
+                                // if the api call times out or is refused: it doesnt matter skip it
+                                throw err_1;
+                            }
+                            return [3 /*break*/, 9];
+                        case 9: return [4 /*yield*/, __await({
                                 match: matchRes.data,
                                 timeline: timelineRes.data,
                             })];
-                        case 8: 
+                        case 10: 
                         // yield result
-                        return [4 /*yield*/, _c.sent()];
-                        case 9:
+                        return [4 /*yield*/, _d.sent()];
+                        case 11:
                             // yield result
-                            _c.sent();
+                            _d.sent();
                             loops++;
                             return [3 /*break*/, 1];
-                        case 10: return [4 /*yield*/, __await(void 0)];
-                        case 11: return [2 /*return*/, _c.sent()];
+                        case 12: return [4 /*yield*/, __await(void 0)];
+                        case 13: return [2 /*return*/, _d.sent()];
                     }
                 });
             });

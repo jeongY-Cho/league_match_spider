@@ -35,46 +35,84 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findEntry = void 0;
 var fetchMatch_1 = require("./fetchers/fetchMatch");
 var fetchMatchHistory_1 = require("./fetchers/fetchMatchHistory");
 var fetchFeaturedMatches_1 = require("./fetchers/fetchFeaturedMatches");
 var fetchAccountInfo_1 = require("./fetchers/fetchAccountInfo");
+var loglevel_1 = __importDefault(require("loglevel"));
 function findEntry(entryGameId, RIOT_API_REGION, queues, max_age) {
+    var _a;
     if (max_age === void 0) { max_age = 48 * 60 * 60 * 1000; }
     return __awaiter(this, void 0, void 0, function () {
-        var randomParticipantId, match, featuredGames, matchesSummary, randomGame, randomParticipant, matchHistory;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        function matchFilter(match) {
+            return (queues.includes(match.queue) &&
+                match.timestamp >= Date.now() - max_age - 1000);
+        }
+        var summonerNames, match, featuredGames, matchesSummary, _i, summonerNames_1, summonerName, accountId, history_1, _b, _c, match, err_1;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
+                    summonerNames = [];
                     if (!entryGameId) return [3 /*break*/, 2];
                     return [4 /*yield*/, fetchMatch_1.fetchMatch(entryGameId, RIOT_API_REGION)];
                 case 1:
-                    match = _a.sent();
-                    randomParticipantId =
-                        match.data.participantIdentities[Math.floor(Math.random() * match.data.participantIdentities.length)].player.accountId;
-                    return [3 /*break*/, 5];
+                    match = _d.sent();
+                    summonerNames = match.data.participantIdentities.map(function (participant) {
+                        return participant.player.summonerName;
+                    });
+                    return [3 /*break*/, 4];
                 case 2: return [4 /*yield*/, fetchFeaturedMatches_1.fetchFeaturedMatches(undefined, RIOT_API_REGION)];
                 case 3:
-                    featuredGames = _a.sent();
-                    matchesSummary = featuredGames.data.gameList.filter(function (game) {
-                        console.log(game);
-                        return queues.includes(game.gameQueueConfigID);
+                    featuredGames = _d.sent();
+                    matchesSummary = featuredGames.data.gameList;
+                    matchesSummary.forEach(function (match) {
+                        return match.participants.forEach(function (participant) {
+                            summonerNames.push(participant.summonerName);
+                        });
                     });
-                    randomGame = matchesSummary[Math.floor(Math.random() * matchesSummary.length)];
-                    randomParticipant = randomGame.participants[Math.floor(Math.random() * randomGame.participants.length)];
-                    return [4 /*yield*/, fetchAccountInfo_1.fetchAccountInfo(randomParticipant.summonerName, RIOT_API_REGION)];
+                    _d.label = 4;
                 case 4:
-                    randomParticipantId = (_a.sent()).data.accountId;
-                    _a.label = 5;
-                case 5: return [4 /*yield*/, fetchMatchHistory_1.fetchMatchHistory(randomParticipantId, RIOT_API_REGION)];
+                    _i = 0, summonerNames_1 = summonerNames;
+                    _d.label = 5;
+                case 5:
+                    if (!(_i < summonerNames_1.length)) return [3 /*break*/, 11];
+                    summonerName = summonerNames_1[_i];
+                    _d.label = 6;
                 case 6:
-                    matchHistory = (_a.sent()).data.matches;
-                    console.log(matchHistory);
-                    return [2 /*return*/, matchHistory.filter(function (match) {
-                            return (match.timestamp >= Date.now() - max_age - 1000 && queues.includes(match.queue));
-                        })[0]];
+                    _d.trys.push([6, 9, , 10]);
+                    return [4 /*yield*/, fetchAccountInfo_1.fetchAccountInfo(summonerName, RIOT_API_REGION)];
+                case 7:
+                    accountId = (_d.sent()).data
+                        .accountId;
+                    return [4 /*yield*/, fetchMatchHistory_1.fetchMatchHistory(accountId, RIOT_API_REGION)];
+                case 8:
+                    history_1 = _d.sent();
+                    for (_b = 0, _c = history_1.data.matches; _b < _c.length; _b++) {
+                        match = _c[_b];
+                        if (matchFilter(match)) {
+                            return [2 /*return*/, match];
+                        }
+                    }
+                    return [3 /*break*/, 10];
+                case 9:
+                    err_1 = _d.sent();
+                    if ([403, 405, 415, 401].includes((_a = err_1.response) === null || _a === void 0 ? void 0 : _a.code)) {
+                        // only throw error if its one of these kinds of errors
+                        loglevel_1.default.warn(err_1);
+                        throw err_1;
+                    }
+                    return [3 /*break*/, 10];
+                case 10:
+                    _i++;
+                    return [3 /*break*/, 5];
+                case 11: 
+                // if nothing found throw error
+                throw "No match found with given params";
             }
         });
     });

@@ -27,6 +27,17 @@ var MatchBuffer = /** @class */ (function (_super) {
             _super.prototype.push.apply(_this, items);
             // sort array
             _this.sort(function (a, b) { return b.timestamp - a.timestamp; });
+            // remove any duplicates
+            var lastTimestamp = Infinity;
+            for (var i = 0; i < _this.length; i++) {
+                var currentTimestamp = _this[i].timestamp;
+                if (currentTimestamp >= lastTimestamp) {
+                    // since array is already sorted by timestamp
+                    // if timestamp of a later game is the same or equal to a previous one it must be a duplicate
+                    _this.splice(i, 1);
+                }
+                lastTimestamp = currentTimestamp;
+            }
             // remove extraneous
             _this.splice(_this.max_size);
             return _this.length;

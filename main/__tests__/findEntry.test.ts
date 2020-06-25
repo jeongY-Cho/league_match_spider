@@ -24,6 +24,9 @@ mocked(axios.get).mockResolvedValue({
       }
     }],
   },
+  headers: {
+    "X-App-Rate-Limit-Count": "test:test"
+  }
 });
 
 test("test without id", async () => {

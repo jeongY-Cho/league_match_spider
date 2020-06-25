@@ -25,6 +25,9 @@ mocked(axios.get).mockResolvedValue({
       },
     ],
   },
+  headers: {
+    "X-App-Rate-Limit": "test:test"
+  }
 });
 
 test("check for RIOT_API_KEY in process.env", () => {

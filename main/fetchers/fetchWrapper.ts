@@ -13,6 +13,11 @@ export function fetchWrapper<A, B, R>(
       let res = await fn(id, region);
       // @ts-ignore
       log.debug(`${fn.name} returned from call with: ${id}`);
+      // @ts-ignore
+      if (res.headers) {
+        // @ts-ignore
+        log.debug(`Rate limit count: ${res.headers["X-App-Rate-Limit-Count"]}`)
+      }
       return res;
     } catch (err) {
       switch (err.response?.status) {

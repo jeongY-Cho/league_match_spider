@@ -2,12 +2,13 @@
   "name": "league_match_spider",
   "version": "1.0.0",
   "description": "a crawler to collect matches from the Riot API",
-  "main": "build/index.js",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "scripts": {
     "test-watch": "jest --watch",
     "test": "jest",
     "build-watch": "tsc --watch",
-    "build": "tsc"
+    "build": "jest --coverage && tsc"
   },
   "author": "Jeong Yeon Cho",
   "license": "MIT",

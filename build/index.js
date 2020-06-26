@@ -177,7 +177,7 @@ function MatchSpider(options) {
                             return [4 /*yield*/, __await(fetchMatchHistory_1.fetchMatchHistory(randomAccount, Regions_1.RegionLookup[_options.region]))];
                         case 7:
                             matchHistory = _c.sent();
-                            matchHistory.data.matches.forEach(function (match) {
+                            matchHistory.data.matches.slice(0, 10).forEach(function (match) {
                                 if (_options.queues.includes(match.queue)) {
                                     matchBuffer.push(match);
                                 }

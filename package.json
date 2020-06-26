@@ -8,7 +8,7 @@
     "test-watch": "jest --watch",
     "test": "jest",
     "build-watch": "tsc --watch",
-    "build": "jest --coverage && tsc"
+    "build": "jest --coverage && tsc && echo \"$$$ Tests passed and new build compiled :)\""
   },
   "author": "Jeong Yeon Cho",
   "license": "MIT",

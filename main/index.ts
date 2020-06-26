@@ -147,11 +147,9 @@ export function MatchSpider(options: MatchSpiderOptions) {
             });
 
           } catch (err) {
+            // just skip this err; an error would be raised elsewhere if its a breaking error
             log.warn("Err while getting match history", err)
-            if (err.status !== "ECONNREFUSED" && err.status !== "ETIMEDOUT") {
-              // if the api call times out or is refused: it doesnt matter skip it
-              throw err
-            }
+
           }
         }
 

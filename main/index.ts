@@ -140,7 +140,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
               randomAccount,
               RegionLookup[_options.region]
             );
-            matchHistory.data.matches.forEach((match) => {
+            matchHistory.data.matches.slice(0,10).forEach((match) => {
               if (_options.queues.includes(match.queue)) {
                 matchBuffer.push(match);
               }

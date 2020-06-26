@@ -1,6 +1,6 @@
 {
   "name": "league_match_spider",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "a crawler to collect matches from the Riot API",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",

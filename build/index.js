@@ -185,11 +185,8 @@ function MatchSpider(options) {
                             return [3 /*break*/, 9];
                         case 8:
                             err_1 = _c.sent();
+                            // just skip this err; an error would be raised elsewhere if its a breaking error
                             log.warn("Err while getting match history", err_1);
-                            if (err_1.status !== "ECONNREFUSED" && err_1.status !== "ETIMEDOUT") {
-                                // if the api call times out or is refused: it doesnt matter skip it
-                                throw err_1;
-                            }
                             return [3 /*break*/, 9];
                         case 9: return [4 /*yield*/, __await({
                                 match: matchRes.data,

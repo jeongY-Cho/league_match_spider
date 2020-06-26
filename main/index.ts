@@ -148,7 +148,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
 
           } catch (err) {
 
-            if (!err.response?.code) {
+            if (!err.response) {
               // if the api call returns a response error: it doesn't matter skip it. 
               throw err
             }

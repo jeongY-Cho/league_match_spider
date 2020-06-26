@@ -16,7 +16,7 @@ export function fetchWrapper<A, B, R>(
       // @ts-ignore
       if (res.headers) {
         // @ts-ignore
-        log.debug(`Rate limit count: ${res.headers["X-App-Rate-Limit-Count"]}`)
+        log.debug(`Rate limit count: ${res.headers["x-app-rate-limit-count"]}`)
       }
       return res;
     } catch (err) {

@@ -78,7 +78,7 @@ function fetchWrapper(fn, max_attempts) {
                         // @ts-ignore
                         if (res.headers) {
                             // @ts-ignore
-                            log.debug("Rate limit count: " + res.headers["X-App-Rate-Limit-Count"]);
+                            log.debug("Rate limit count: " + res.headers["x-app-rate-limit-count"]);
                         }
                         return [2 /*return*/, res];
                     case 2:

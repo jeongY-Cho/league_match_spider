@@ -121,7 +121,7 @@ function MatchSpider(options) {
                             matchBuffer = new MatchBuffer_1.default(_options.bufferSize);
                             log.debug("matchBuffer initialized with max size: " + _options.bufferSize);
                             // debug msg
-                            if (_options.entryGameId) {
+                            if (_options.fallbackMethod === "match") {
                                 log.info("Starting crawl with entryGame:", _options.entryGameId);
                             }
                             else {
@@ -136,7 +136,9 @@ function MatchSpider(options) {
                             log.info("match buffer current length: " + matchBuffer.length);
                             _a = matchBuffer.shift();
                             if (_a) return [3 /*break*/, 3];
-                            return [4 /*yield*/, __await(findEntry_1.findEntry(_options.entryGameId, Regions_1.RegionLookup[_options.region], _options.queues, _options.max_age))];
+                            return [4 /*yield*/, __await(findEntry_1.findEntry(
+                                // @ts-ignore  # can be undefined. 
+                                _options.entryGameId, Regions_1.RegionLookup[_options.region], _options.queues, _options.max_age))];
                         case 2:
                             _a = (_c.sent());
                             _c.label = 3;

@@ -10,21 +10,20 @@ import { Regions, RegionLookup, URegions } from "./Regions";
 config();
 
 type MatchSpiderOptions = CommonOptions &
-  (AccountFallback | FeaturedGameFallback);
+  (MatchFallback | FeaturedGameFallback);
 
 interface CommonOptions {
   region: Regions | URegions;
   bufferSize?: number;
   queues?: QueueID[];
-  entryGameId?: number;
   duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
   max_iter?: number;
   logging?: log.LogLevelDesc
 }
 
-interface AccountFallback {
+interface MatchFallback {
   fallbackMethod: "match";
-  matchId: string;
+  entryGameId: number;
 }
 interface FeaturedGameFallback {
   fallbackMethod?: "featured";
@@ -73,7 +72,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
       );
 
       // debug msg
-      if (_options.entryGameId) {
+      if (_options.fallbackMethod === "match") {
         log.info("Starting crawl with entryGame:", _options.entryGameId);
       } else {
         log.info("Starting crawl with featured game entry");
@@ -88,6 +87,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
         let targetMatch =
           matchBuffer.shift() ||
           (await findEntry(
+            // @ts-ignore  # can be undefined. 
             _options.entryGameId,
             RegionLookup[_options.region],
             _options.queues,

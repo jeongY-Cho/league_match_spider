@@ -1,19 +1,18 @@
 import { QueueID } from "./types";
 import * as log from "loglevel";
 import { Regions, RegionLookup, URegions } from "./Regions";
-declare type MatchSpiderOptions = CommonOptions & (AccountFallback | FeaturedGameFallback);
+declare type MatchSpiderOptions = CommonOptions & (MatchFallback | FeaturedGameFallback);
 interface CommonOptions {
     region: Regions | URegions;
     bufferSize?: number;
     queues?: QueueID[];
-    entryGameId?: number;
     duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
     max_iter?: number;
     logging?: log.LogLevelDesc;
 }
-interface AccountFallback {
+interface MatchFallback {
     fallbackMethod: "match";
-    matchId: string;
+    entryGameId: number;
 }
 interface FeaturedGameFallback {
     fallbackMethod?: "featured";

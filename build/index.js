@@ -114,14 +114,13 @@ function MatchSpider(options) {
     return {
         iter: function (max_iter) {
             return __asyncGenerator(this, arguments, function () {
-                var matchBuffer, loops, skips, targetMatch, _a, _b, matchRes, timelineRes, randomAccount, matchHistory, err_1;
+                var matchBuffer, region, loops, skips, targetMatch, _a, _b, matchRes, timelineRes, randomAccount, matchHistory, err_1;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
                             matchBuffer = new MatchBuffer_1.default(_options.bufferSize);
                             log.debug("matchBuffer initialized with max size: " + _options.bufferSize);
                             // debug msg
-<<<<<<< HEAD
                             if (_options.entryMethod === "match") {
                                 if (_options.entryGameId) {
                                     log.info("Starting crawl with entryGame:", _options.entryGameId);
@@ -129,13 +128,15 @@ function MatchSpider(options) {
                                 else {
                                     log.warn("entryMethod 'match' specified but no entry game given; using featured games instead");
                                 }
-=======
-                            if (_options.fallbackMethod === "match") {
-                                log.info("Starting crawl with entryGame:", _options.entryGameId);
->>>>>>> 327c5a38197faaa8436381be4e5867cfcf9e70c8
                             }
                             else {
                                 log.info("Starting crawl with featured game entry");
+                            }
+                            if (Regions_1.isRegionName(_options.region)) {
+                                region = Regions_1.Regions[_options.region];
+                            }
+                            else {
+                                region = _options.region;
                             }
                             loops = 0 // loop counter
                             ;
@@ -148,7 +149,7 @@ function MatchSpider(options) {
                             if (_a) return [3 /*break*/, 3];
                             return [4 /*yield*/, __await(findEntry_1.findEntry(
                                 // @ts-ignore  # can be undefined. 
-                                _options.entryGameId, Regions_1.RegionLookup[_options.region], _options.queues, _options.max_age))];
+                                _options.entryGameId, region, _options.queues, _options.max_age))];
                         case 2:
                             _a = (_c.sent());
                             _c.label = 3;
@@ -175,7 +176,7 @@ function MatchSpider(options) {
                             else {
                                 skips = 0;
                             }
-                            return [4 /*yield*/, __await(fetchMatchAndTimeline_1.fetchMatchAndTimeline(targetMatch.gameId, Regions_1.RegionLookup[_options.region]))];
+                            return [4 /*yield*/, __await(fetchMatchAndTimeline_1.fetchMatchAndTimeline(targetMatch.gameId, region))];
                         case 5:
                             _b = _c.sent(), matchRes = _b[0], timelineRes = _b[1];
                             log.debug("fetched match and timeline data for", targetMatch.gameId);
@@ -186,7 +187,7 @@ function MatchSpider(options) {
                             _c.label = 6;
                         case 6:
                             _c.trys.push([6, 8, , 9]);
-                            return [4 /*yield*/, __await(fetchMatchHistory_1.fetchMatchHistory(randomAccount, Regions_1.RegionLookup[_options.region]))];
+                            return [4 /*yield*/, __await(fetchMatchHistory_1.fetchMatchHistory(randomAccount, region))];
                         case 7:
                             matchHistory = _c.sent();
                             matchHistory.data.matches.slice(0, 10).forEach(function (match) {

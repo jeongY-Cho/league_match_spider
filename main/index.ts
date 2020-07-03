@@ -6,14 +6,14 @@ import { fetchMatchHistory } from "./fetchers/fetchMatchHistory";
 import MatchBuffer from "./MatchBuffer";
 import { fetchMatchAndTimeline } from "./fetchers/fetchMatchAndTimeline";
 import { findEntry } from "./findEntry";
-import { Regions, RegionLookup, URegions } from "./Regions";
+import {Regions, RegionsOption, isRegionName, RegionsURL } from "./Regions";
 config();
 
 type MatchSpiderOptions = CommonOptions &
   (MatchEntry | FeaturedEntry);
 
 interface CommonOptions {
-  region: Regions | URegions;
+  region: RegionsOption;
   bufferSize?: number;
   queues?: QueueID[];
   duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
@@ -30,7 +30,7 @@ interface FeaturedEntry {
 }
 
 export type ValueOf<T> = T[keyof T];
-export type ValueOfRegions = ValueOf<RegionLookup>;
+export type ValueOfRegions = ValueOf<Regions>;
 
 export function MatchSpider(options: MatchSpiderOptions) {
   // load from dot env for access in functions
@@ -82,6 +82,13 @@ export function MatchSpider(options: MatchSpiderOptions) {
         log.info("Starting crawl with featured game entry");
       }
 
+      // get region url from region option
+      let region: RegionsURL
+      if (isRegionName(_options.region)) {
+        region = Regions[_options.region]
+      } else {
+        region = _options.region
+      }
 
       let loops = 0  // loop counter
       let skips = 0
@@ -93,7 +100,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
           (await findEntry(
             // @ts-ignore  # can be undefined. 
             _options.entryGameId,
-            RegionLookup[_options.region],
+            region,
             _options.queues,
             _options.max_age,
           ));
@@ -123,7 +130,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
         // get the game info
         let [matchRes, timelineRes] = await fetchMatchAndTimeline(
           targetMatch.gameId,
-          RegionLookup[_options.region]
+          region
         );
         log.debug("fetched match and timeline data for", targetMatch.gameId);
 
@@ -142,7 +149,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
           try {
             let matchHistory = await fetchMatchHistory(
               randomAccount,
-              RegionLookup[_options.region]
+              region
             );
             matchHistory.data.matches.slice(0,10).forEach((match) => {
               if (_options.queues.includes(match.queue)) {
@@ -168,5 +175,3 @@ export function MatchSpider(options: MatchSpiderOptions) {
     },
   };
 }
-
-

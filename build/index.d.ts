@@ -1,7 +1,11 @@
 import { QueueID } from "./types";
 import * as log from "loglevel";
 import { Regions, RegionLookup, URegions } from "./Regions";
+<<<<<<< HEAD
 declare type MatchSpiderOptions = CommonOptions & (MatchEntry | FeaturedEntry);
+=======
+declare type MatchSpiderOptions = CommonOptions & (MatchFallback | FeaturedGameFallback);
+>>>>>>> 327c5a38197faaa8436381be4e5867cfcf9e70c8
 interface CommonOptions {
     region: Regions | URegions;
     bufferSize?: number;
@@ -10,8 +14,13 @@ interface CommonOptions {
     max_iter?: number;
     logging?: log.LogLevelDesc;
 }
+<<<<<<< HEAD
 interface MatchEntry {
     entryMethod: "match";
+=======
+interface MatchFallback {
+    fallbackMethod: "match";
+>>>>>>> 327c5a38197faaa8436381be4e5867cfcf9e70c8
     entryGameId: number;
 }
 interface FeaturedEntry {

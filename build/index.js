@@ -121,6 +121,7 @@ function MatchSpider(options) {
                             matchBuffer = new MatchBuffer_1.default(_options.bufferSize);
                             log.debug("matchBuffer initialized with max size: " + _options.bufferSize);
                             // debug msg
+<<<<<<< HEAD
                             if (_options.entryMethod === "match") {
                                 if (_options.entryGameId) {
                                     log.info("Starting crawl with entryGame:", _options.entryGameId);
@@ -128,6 +129,10 @@ function MatchSpider(options) {
                                 else {
                                     log.warn("entryMethod 'match' specified but no entry game given; using featured games instead");
                                 }
+=======
+                            if (_options.fallbackMethod === "match") {
+                                log.info("Starting crawl with entryGame:", _options.entryGameId);
+>>>>>>> 327c5a38197faaa8436381be4e5867cfcf9e70c8
                             }
                             else {
                                 log.info("Starting crawl with featured game entry");

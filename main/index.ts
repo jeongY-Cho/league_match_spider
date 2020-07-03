@@ -9,6 +9,9 @@ import { findEntry } from "./findEntry";
 import {Regions, RegionsOption, isRegionName, RegionsURL } from "./Regions";
 config();
 
+export {QueueID} from  "./types"
+export {Regions}
+
 type MatchSpiderOptions = CommonOptions &
   (MatchEntry | FeaturedEntry);
 

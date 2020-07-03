@@ -10,24 +10,23 @@ import { Regions, RegionLookup, URegions } from "./Regions";
 config();
 
 type MatchSpiderOptions = CommonOptions &
-  (AccountFallback | FeaturedGameFallback);
+  (MatchEntry | FeaturedEntry);
 
 interface CommonOptions {
   region: Regions | URegions;
   bufferSize?: number;
   queues?: QueueID[];
-  entryGameId?: number;
   duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
   max_iter?: number;
   logging?: log.LogLevelDesc
 }
 
-interface AccountFallback {
-  fallbackMethod: "match";
-  matchId: string;
+interface MatchEntry {
+  entryMethod: "match";
+  entryGameId: number;
 }
-interface FeaturedGameFallback {
-  fallbackMethod?: "featured";
+interface FeaturedEntry {
+  entryMethod: "featured";
 }
 
 export type ValueOf<T> = T[keyof T];
@@ -51,7 +50,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
   } 
 
   const defaults = {
-    fallbackMethod: "featured_game",
+    entryMethod: "featured_game",
     bufferSize: 1000,
     queues: [QueueID.Flex_SR, QueueID.Solo_SR],
     max_attempts: 3,
@@ -73,8 +72,12 @@ export function MatchSpider(options: MatchSpiderOptions) {
       );
 
       // debug msg
-      if (_options.entryGameId) {
-        log.info("Starting crawl with entryGame:", _options.entryGameId);
+      if (_options.entryMethod === "match") {
+        if (_options.entryGameId) {
+          log.info("Starting crawl with entryGame:", _options.entryGameId);
+        } else {
+          log.warn("entryMethod 'match' specified but no entry game given; using featured games instead")
+        }
       } else {
         log.info("Starting crawl with featured game entry");
       }
@@ -88,6 +91,7 @@ export function MatchSpider(options: MatchSpiderOptions) {
         let targetMatch =
           matchBuffer.shift() ||
           (await findEntry(
+            // @ts-ignore  # can be undefined. 
             _options.entryGameId,
             RegionLookup[_options.region],
             _options.queues,

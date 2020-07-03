@@ -1,22 +1,21 @@
 import { QueueID } from "./types";
 import * as log from "loglevel";
 import { Regions, RegionLookup, URegions } from "./Regions";
-declare type MatchSpiderOptions = CommonOptions & (AccountFallback | FeaturedGameFallback);
+declare type MatchSpiderOptions = CommonOptions & (MatchEntry | FeaturedEntry);
 interface CommonOptions {
     region: Regions | URegions;
     bufferSize?: number;
     queues?: QueueID[];
-    entryGameId?: number;
     duplicateChecker?: (gameId: number) => (boolean | Promise<boolean>);
     max_iter?: number;
     logging?: log.LogLevelDesc;
 }
-interface AccountFallback {
-    fallbackMethod: "match";
-    matchId: string;
+interface MatchEntry {
+    entryMethod: "match";
+    entryGameId: number;
 }
-interface FeaturedGameFallback {
-    fallbackMethod?: "featured";
+interface FeaturedEntry {
+    entryMethod: "featured";
 }
 export declare type ValueOf<T> = T[keyof T];
 export declare type ValueOfRegions = ValueOf<RegionLookup>;

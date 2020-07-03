@@ -97,7 +97,7 @@ function MatchSpider(options) {
         throw "Region not specified in options";
     }
     var defaults = {
-        fallbackMethod: "featured_game",
+        entryMethod: "featured_game",
         bufferSize: 1000,
         queues: [types_1.QueueID.Flex_SR, types_1.QueueID.Solo_SR],
         max_attempts: 3,
@@ -121,8 +121,13 @@ function MatchSpider(options) {
                             matchBuffer = new MatchBuffer_1.default(_options.bufferSize);
                             log.debug("matchBuffer initialized with max size: " + _options.bufferSize);
                             // debug msg
-                            if (_options.entryGameId) {
-                                log.info("Starting crawl with entryGame:", _options.entryGameId);
+                            if (_options.entryMethod === "match") {
+                                if (_options.entryGameId) {
+                                    log.info("Starting crawl with entryGame:", _options.entryGameId);
+                                }
+                                else {
+                                    log.warn("entryMethod 'match' specified but no entry game given; using featured games instead");
+                                }
                             }
                             else {
                                 log.info("Starting crawl with featured game entry");
@@ -136,7 +141,9 @@ function MatchSpider(options) {
                             log.info("match buffer current length: " + matchBuffer.length);
                             _a = matchBuffer.shift();
                             if (_a) return [3 /*break*/, 3];
-                            return [4 /*yield*/, __await(findEntry_1.findEntry(_options.entryGameId, Regions_1.RegionLookup[_options.region], _options.queues, _options.max_age))];
+                            return [4 /*yield*/, __await(findEntry_1.findEntry(
+                                // @ts-ignore  # can be undefined. 
+                                _options.entryGameId, Regions_1.RegionLookup[_options.region], _options.queues, _options.max_age))];
                         case 2:
                             _a = (_c.sent());
                             _c.label = 3;
